@@ -41,6 +41,9 @@
         </button>
 			<div class="collapse navbar-collapse" id="navbarResponsive">
 				<ul class="navbar-nav ml-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/phpmyadmin">phpMyAdmin</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -123,6 +126,7 @@
 											}
 											
 										} else {
+											
 											echo "<tr>";
 											echo "<td id='" . $data['ID'] . "'><a href='$entry'>$entry</a></td>";
 											echo "<td id='" . $data['ID'] . "'>" . (date ("d.m.Y H:i", filemtime($entry))) . "</td>";
@@ -136,6 +140,7 @@
 											}
 											
 											echo "</tr>";
+											
 										}
 			
 										
