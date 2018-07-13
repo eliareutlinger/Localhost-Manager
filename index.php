@@ -11,20 +11,25 @@
 	<title>Localhost Manager v1.0</title>
 
 	<!-- Bootstrap core CSS -->
-	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-
-	<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
 	<!-- Custom styles for this template -->
 	<style>
 		body {
 			padding-top: 54px;
 		}
-		
+
 		@media (min-width: 992px) {
 			body {
 				padding-top: 56px;
 			}
+		}
+		.highlighter {
+		    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+		    transition: box-shadow 0.3s ease-in-out;
+		}
+		.highlighter:hover {
+		    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 		}
 	</style>
 
@@ -52,70 +57,69 @@
 	<!-- Page Content -->
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-12 text-center">
-				<h1 class="mt-5"></h1>
-				<p class="lead"></p>
-				<table id="thetable" class="display" cellspacing="0" width="100%">
-					<thead>
-						<tr>
-							<th>Ordnername</th>
-							<th>Zuletzt geändert</th>
-							<th>Beschreibung</th>
-							<th>Eingetragen am</th>
-							<th>GitHub</th>
-						</tr>
-					</thead>
-					<tfoot>
-						<tr>
-							<th>Ordnername</th>
-							<th>Zuletzt geändert</th>
-							<th>Beschreibung</th>
-							<th>Eingetragen am</th>
-							<th>GitHub</th>
-						</tr>
-					</tfoot>
-					<tbody>
+			<div class="col-lg-12">
+				<div class="row" style="padding-top: 20px;">
+
 						<?php
-				
+
+						$conn = mysqli_connect("localhost", "root", "", "db_localmanager") or die (mysqli_error());
+
+						if ($handle = opendir('.')) {
+
+							$array = "";
+
+							while (false !== ($entry = readdir($handle))) {
+
+								if ($entry != "." && $entry != ".." && $entry != "index.php") {
+
+									$query = "SELECT * FROM tb_file_data WHERE file_name = '$entry';";
+									$data = mysqli_fetch_array(mysqli_query($conn, $query));
+
+									if (!$data) {
+										$date = date('Y-m-d h:i:s');
+										$query = "INSERT INTO tb_file_data (file_name, file_reg_date, github) VALUES ('$entry', '$date', 0);";
+										if ($conn->query($query) === TRUE) {
+											echo "New record created successfully";
+										} else {
+											echo "Error: " . $query . "<br>" . $conn->error;
+										}
+
+									} else {
+
+										echo '
+										<div class="col-lg-4" style="padding-top:10px;">
+											<div class="card highlighter col-lg-12 text-center" onclick="window.location.replace(\''.$entry.'\');" style="max-height: 150px; min-height: 150px; background-color: #A6D0F1; border-color: #3081C0; color: #3081C0; cursor: pointer;">
+												<h2 style="padding-top:45px;">'.$entry.'</h2>
+											</div>
+										</div>
+										';
+
+									}
+
+
+
+
+								}
+							}
+
+							echo $array;
+
+							closedir($handle);
+						}
+							/*
 							$conn = mysqli_connect("localhost", "root", "", "db_localmanager") or die (mysqli_error());
-							
-							if(isset($_GET['do']) && $_GET['do'] == "change"){
-								$theid = $_GET['id'];
-								$bool = $_GET['to'];
-								
-								$query = "UPDATE `tb_file_data` SET `github` = '$bool' WHERE `tb_file_data`.`ID` = $theid;";
-								
-								if ($conn->query($query) === TRUE) {
-									echo "New record created successfully";
-								} else {
-									echo "Error: " . $query . "<br>" . $conn->error;
-								}
-							}
-							
-							if(isset($_GET['do']) && $_GET['do'] == "updescr"){
-								$theid = $_GET['id'];
-								$descr = $_GET['text'];
-								
-								$query = "UPDATE `tb_file_data` SET `file_description` = '$descr' WHERE `tb_file_data`.`ID` = $theid;";
-								
-								if ($conn->query($query) === TRUE) {
-									echo "New record created successfully";
-								} else {
-									echo "Error: " . $query . "<br>" . $conn->error;
-								}
-							}
-							
+
 							if ($handle = opendir('.')) {
-								
+
 								$array = "";
-								
+
 								while (false !== ($entry = readdir($handle))) {
-							
+
 									if ($entry != "." && $entry != ".." && $entry != "index.php") {
-										
+
 										$query = "SELECT * FROM tb_file_data WHERE file_name = '$entry';";
 										$data = mysqli_fetch_array(mysqli_query($conn, $query));
-										
+
 										if (!$data) {
 											$date = date('Y-m-d h:i:s');
 											$query = "INSERT INTO tb_file_data (file_name, file_reg_date, github) VALUES ('$entry', '$date', 0);";
@@ -124,103 +128,60 @@
 											} else {
 												echo "Error: " . $query . "<br>" . $conn->error;
 											}
-											
+
 										} else {
-											
+
+											echo '
+
+											';
+
 											echo "<tr>";
 											echo "<td id='" . $data['ID'] . "'><a href='$entry'>$entry</a></td>";
 											echo "<td id='" . $data['ID'] . "'>" . (date ("d.m.Y H:i", filemtime($entry))) . "</td>";
 											echo "<td class='descr' id='" . $data['ID'] . "'>" . $data['file_description'] . "</td>";
 											echo "<td id='" . $data['ID'] . "'>" . date('d.m.Y H:i:s', (strtotime($data['file_reg_date']))) . "</td>";
-											
+
 											if($data['github']){
 												echo "<td class='gith' id='" . $data['ID'] . "'>✓</td>";
 											} else {
 												echo "<td class='gith' id='" . $data['ID'] . "'>✗</td>";
 											}
-											
+
 											echo "</tr>";
-											
+
 										}
-			
-										
-										
-										
+
+
+
+
 									}
 								}
-								
+
 								echo $array;
-								
+
 								closedir($handle);
 							}
-							
+							*/
 						?>
-					</tbody>
-				</table>
+
+				</div>
 			</div>
 		</div>
 		<hr>
 		<div class="row">
 			<div class="col-lg-12">
-				<div id="description_change" style="opacity: 0;">
-					<form>
-						<div class="form-group">
-							<label for="exampleFormControlTextarea1">Change Description of</label>
-							<textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-						</div>
-						<button type="button" class="btn btn-primary">Update</button>
-					</form>
-				</div>
 			</div>
 		</div>
 	</div>
 
+	<script
+  src="http://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
 	<!-- Bootstrap core JavaScript -->
-	<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.bundle.min.js" integrity="sha384-lZmvU/TzxoIQIOD9yQDEpvxp6wEU32Fy0ckUgOH4EIlMOCdR823rg4+3gWRwnX1M" crossorigin="anonymous"></script>
 
-	<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-
-	<script type="text/javascript">
-		$(document).ready(function() {
-
-			$('#thetable').DataTable();
-
-			$('.descr').click(function() {
-				
-				var id = this.id;
-				var iddescr = "#" + id + ".descr";
-				
-				$(iddescr).css("background-color: green;");
-
-			});
-
-			$('.gith').click(function() {
-
-				var id = this.id;
-				var idgith = "#" + id + ".gith";
-
-				if ($(idgith).html() == "✓") {
-					$(idgith).html('✗');
-					$.ajax({
-						url: "index.php?do=change&id=" + id + "&to=0",
-						context: document.body
-					}).done(function() {
-						$(this).addClass("done");
-					});
-				} else {
-					$(idgith).html('✓');
-					$.ajax({
-						url: "index.php?do=change&id=" + id + "&to=1",
-						context: document.body
-					}).done(function() {
-						$(this).addClass("done");
-					});
-				}
-			});
-
-		});
-	</script>
 
 </body>
 
