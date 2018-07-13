@@ -103,65 +103,10 @@
 							}
 
 							echo $array;
-
 							closedir($handle);
+							
 						}
-							/*
-							$conn = mysqli_connect("localhost", "root", "", "db_localmanager") or die (mysqli_error());
 
-							if ($handle = opendir('.')) {
-
-								$array = "";
-
-								while (false !== ($entry = readdir($handle))) {
-
-									if ($entry != "." && $entry != ".." && $entry != "index.php") {
-
-										$query = "SELECT * FROM tb_file_data WHERE file_name = '$entry';";
-										$data = mysqli_fetch_array(mysqli_query($conn, $query));
-
-										if (!$data) {
-											$date = date('Y-m-d h:i:s');
-											$query = "INSERT INTO tb_file_data (file_name, file_reg_date, github) VALUES ('$entry', '$date', 0);";
-											if ($conn->query($query) === TRUE) {
-												echo "New record created successfully";
-											} else {
-												echo "Error: " . $query . "<br>" . $conn->error;
-											}
-
-										} else {
-
-											echo '
-
-											';
-
-											echo "<tr>";
-											echo "<td id='" . $data['ID'] . "'><a href='$entry'>$entry</a></td>";
-											echo "<td id='" . $data['ID'] . "'>" . (date ("d.m.Y H:i", filemtime($entry))) . "</td>";
-											echo "<td class='descr' id='" . $data['ID'] . "'>" . $data['file_description'] . "</td>";
-											echo "<td id='" . $data['ID'] . "'>" . date('d.m.Y H:i:s', (strtotime($data['file_reg_date']))) . "</td>";
-
-											if($data['github']){
-												echo "<td class='gith' id='" . $data['ID'] . "'>✓</td>";
-											} else {
-												echo "<td class='gith' id='" . $data['ID'] . "'>✗</td>";
-											}
-
-											echo "</tr>";
-
-										}
-
-
-
-
-									}
-								}
-
-								echo $array;
-
-								closedir($handle);
-							}
-							*/
 						?>
 
 				</div>
