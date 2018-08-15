@@ -127,7 +127,7 @@
 										$borderColor = $color;
 
 										echo '
-										<div class="col-lg-3" style="padding-top:10px;">
+										<div class="col-lg-3" style="padding-top:20px;">
 											<div class="card highlighter col-lg-12 text-center" onclick="window.location.replace(\''.$entry.'\');" style="max-height: 150px; min-height: 150px; background-color: '.$backgroundColor.'; border-color: '.$borderColor.'; color: '.$color.'; cursor: pointer;">
 												<h4 class="my-auto">'.$entry.'</h2>
 											</div>
