@@ -62,6 +62,40 @@
 
 						<?php
 
+						function random_color_part() {
+						    return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
+						}
+
+						function random_color() {
+						    return random_color_part() . random_color_part() . random_color_part();
+						}
+
+						function rgb_best_contrast($rgb) {
+
+							$r = substr($rgb, 1, 2);
+							$g = substr($rgb, 3, 2);
+							$b = substr($rgb, 5, 2);
+
+						    $rNew = (hexdec($r) < 128) ? 255 : 0;
+						    $gNew = (hexdec($g) < 128) ? 255 : 0;
+						    $bNew = (hexdec($b) < 128) ? 255 : 0;
+
+							$R = dechex($rNew);
+						    if (strlen($R)<2)
+						    $R = '0'.$R;
+
+						    $G = dechex($gNew);
+						    if (strlen($G)<2)
+						    $G = '0'.$G;
+
+						    $B = dechex($bNew);
+						    if (strlen($B)<2)
+						    $B = '0'.$B;
+
+						    return $R . $G . $B;
+
+						}
+
 						$conn = mysqli_connect("localhost", "root", "", "db_localmanager") or die (mysqli_error());
 
 						if ($handle = opendir('.')) {
@@ -86,10 +120,16 @@
 
 									} else {
 
+
+
+										$backgroundColor = "#".random_color();
+										$color = "#".rgb_best_contrast($backgroundColor);
+										$borderColor = $color;
+
 										echo '
-										<div class="col-lg-4" style="padding-top:10px;">
-											<div class="card highlighter col-lg-12 text-center" onclick="window.location.replace(\''.$entry.'\');" style="max-height: 150px; min-height: 150px; background-color: #A6D0F1; border-color: #3081C0; color: #3081C0; cursor: pointer;">
-												<h2 style="padding-top:45px;">'.$entry.'</h2>
+										<div class="col-lg-3" style="padding-top:10px;">
+											<div class="card highlighter col-lg-12 text-center" onclick="window.location.replace(\''.$entry.'\');" style="max-height: 150px; min-height: 150px; background-color: '.$backgroundColor.'; border-color: '.$borderColor.'; color: '.$color.'; cursor: pointer;">
+												<h4 class="my-auto">'.$entry.'</h2>
 											</div>
 										</div>
 										';
@@ -104,7 +144,7 @@
 
 							echo $array;
 							closedir($handle);
-							
+
 						}
 
 						?>
